@@ -2,9 +2,22 @@ import { Module } from '@nestjs/common';
 import { WorkflowServicesController } from './workflow-services.controller';
 import { WorkflowServicesService } from './workflow-services.service';
 import { WorkflowsModule } from './workflows/workflows.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [WorkflowsModule],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.POSTGRES_HOST,
+      port: +process.env.POSTGRES_PORT,
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DB,
+      autoLoadEntities: true,
+      synchronize: true,
+    }),
+    WorkflowsModule,
+  ],
   controllers: [WorkflowServicesController],
   providers: [WorkflowServicesService],
 })

@@ -26,13 +26,14 @@ export class BuildingsService {
   }
 
   async create(createBuildingDto: CreateBuildingDto): Promise<Building> {
+    console.log('creating building', createBuildingDto);
     const building = this.buildingsRepository.create({
       ...createBuildingDto,
     });
     const newBuildingEntity = await this.buildingsRepository.save(building);
 
     // Create a workflow for the new building
-    await this.createWorkflow(newBuildingEntity.id);
+    //  await this.createWorkflow(newBuildingEntity.id);
     return newBuildingEntity;
   }
 
@@ -60,7 +61,7 @@ export class BuildingsService {
     console.log(
       JSON.stringify({ name: 'My Workflow', buildingId } as CreateWorkflowDto),
     );
-    const response = await fetch('http://workflows-service:3001/workflows', {
+    const response = await fetch('http://workflow-services:3001/workflows', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: 'My Workflow', buildingId }),

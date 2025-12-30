@@ -2,13 +2,13 @@
 version: "3.8"
 
 services:
-  workflows-service:
+  workflow-services:
     build:
       context: .
       dockerfile: ./Dockerfile
       args:
-        - APP_NAME=workflows-service
-    command: npm run start:dev -- workflows-service # This instructs Docker Compose to run the "start:dev" script when starting the container
+        - APP_NAME=workflow-services
+    command: npm run start:dev -- workflow-services # This instructs Docker Compose to run the "start:dev" script when starting the container
     environment: # Here we specify the environment variables that will be passed to the container
       - POSTGRES_HOST=workflows-db
       - POSTGRES_PORT=5432
@@ -20,14 +20,14 @@ services:
       - ./package.json:/usr/src/app/package.json
       - ./tsconfig.json:/usr/src/app/tsconfig.json
       # Note: This is usually not a good practice to mount the "node_modules" directory on the host to the container       # We are doing this for the sake of simplicity in this example       - ./node_modules:/usr/src/app/node_modules
-      # This instructs Docker Compose to mount the "workflows-service" directory on the host to the "/usr/src/app" directory on the container
+      # This instructs Docker Compose to mount the "workflow-services" directory on the host to the "/usr/src/app" directory on the container
       # This allows us to make changes to the code on the host and have them reflected in the container without having to rebuild the image
-      - ./apps/workflows-service:/usr/src/app/apps/workflows-service
-    depends_on: # This instructs Docker Compose to start the "workflows-db" container before starting the "workflows-service" container
+      - ./apps/workflow-services:/usr/src/app/apps/workflow-services
+    depends_on: # This instructs Docker Compose to start the "workflows-db" container before starting the "workflow-services" container
       - workflows-db
   workflows-db:
     image: postgres:13.2-alpine
-    environment: # We need to make sure these environment variables match the ones we specified in the "workflows-service" service
+    environment: # We need to make sure these environment variables match the ones we specified in the "workflow-services" service
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=workflows
@@ -54,7 +54,7 @@ services:
       - ./apps/virtual-facility:/usr/src/app/apps/virtual-facility
     depends_on:
       - virtual-facility-db
-      - workflows-service
+      - workflow-services
   virtual-facility-db:
     image: postgres:13.2-alpine
     environment:
